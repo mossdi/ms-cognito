@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using AWS.Cognito.Net.Models;
+using AWS.Cognito.Net.Services;
+using AWS.Cognito.Net.Providers;
+using AWS.Cognito.Net.Interfaces.Services;
+using AWS.Cognito.Net.Interfaces.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.OpenApi.Models;
 
 namespace AWS.Cognito.Net
@@ -22,8 +20,7 @@ namespace AWS.Cognito.Net
         }
 
         public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+        
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -31,9 +28,12 @@ namespace AWS.Cognito.Net
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "AWS.Cognito.Net", Version = "v1"});
             });
+            
+            // Dependency Injection
+            services.AddScoped<IUserPoolProvider<User>, AwsCognitoUserPoolManager<User>>();
+            services.AddScoped<IUserService<User>, UserService<User>>();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -48,7 +48,7 @@ namespace AWS.Cognito.Net
             app.UseRouting();
 
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
