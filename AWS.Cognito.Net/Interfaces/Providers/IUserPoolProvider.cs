@@ -11,7 +11,7 @@ namespace AWS.Cognito.Net.Interfaces.Providers
             Dictionary<string, string> attributes,
             Dictionary<string, string> validationData);
 
-        Task<bool> ConfirmSignUp(
+        Task ConfirmSignUp(
             string userId,
             string confirmationCode);
         

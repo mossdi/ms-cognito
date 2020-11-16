@@ -1,5 +1,4 @@
 using Amazon;
-using Amazon.Runtime;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
 using AWS.Cognito.Net.Interfaces.Providers;
@@ -40,11 +39,11 @@ namespace AWS.Cognito.Net.Providers
             Dictionary<string, string> attributes, 
             Dictionary<string, string> validationData)
         {
-            _cognitoUserPool.SignUpAsync(
+            await _cognitoUserPool.SignUpAsync(
                 userName,
                 password,
                 attributes,
-                validationData).Wait();
+                validationData);
             
             var cognitoUser = await _cognitoUserPool.FindByIdAsync(userName);
 
@@ -55,19 +54,15 @@ namespace AWS.Cognito.Net.Providers
             };
         }
         
-        public async Task<bool> ConfirmSignUp(
+        public async Task ConfirmSignUp(
             string userName,
             string confirmationCode)
         {
             var cognitoUser = await _cognitoUserPool.FindByIdAsync(userName);
             
-            var confirmSignUpRequest = cognitoUser.ConfirmSignUpAsync(
+            await cognitoUser.ConfirmSignUpAsync(
                 confirmationCode,
                 false);
-
-            confirmSignUpRequest.Wait();
-
-            return confirmSignUpRequest.IsCompleted;
         }
         
         public async Task<User> SignIn(            
@@ -81,7 +76,7 @@ namespace AWS.Cognito.Net.Providers
                 Password = password
             };
             
-            cognitoUser.StartWithSrpAuthAsync(authRequest).Wait();
+            await cognitoUser.StartWithSrpAuthAsync(authRequest);
             
             return new User // TODO: Change it to AutoMapping
             {

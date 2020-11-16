@@ -24,9 +24,9 @@ namespace AWS.Cognito.Net.Services
                 null);
         }
 
-        public async Task<bool> ConfirmSignUp(ConfirmSignUpForm form)
-        {
-            return await _userPoolProvider.ConfirmSignUp(
+        public async Task ConfirmSignUp(ConfirmSignUpForm form)
+        { 
+            await _userPoolProvider.ConfirmSignUp(
                 form.UserName,
                 form.ConfirmationCode);
         }

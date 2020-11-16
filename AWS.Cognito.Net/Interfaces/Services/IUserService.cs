@@ -7,7 +7,7 @@ namespace AWS.Cognito.Net.Interfaces.Services
     {
         Task<TUser> SignUp(SignUpForm form);
 
-        Task<bool> ConfirmSignUp(ConfirmSignUpForm form);
+        Task ConfirmSignUp(ConfirmSignUpForm form);
         
         Task<TUser> SignIn(LoginForm form);
 

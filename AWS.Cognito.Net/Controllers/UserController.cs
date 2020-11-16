@@ -25,9 +25,9 @@ namespace AWS.Cognito.Net.Controllers
 
         [HttpPost]
         [Route("confirm-sign-up")]
-        public async Task<bool> ConfirmSignUp(ConfirmSignUpForm form)
-        {
-            return await _userService.ConfirmSignUp(form);
+        public async Task ConfirmSignUp(ConfirmSignUpForm form)
+        { 
+            await _userService.ConfirmSignUp(form);
         }
         
         [HttpPost]
