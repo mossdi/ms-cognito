@@ -7,6 +7,7 @@ using AWS.Cognito.Net.Models;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Amazon.CognitoIdentity;
 
 namespace AWS.Cognito.Net.Providers
 {
@@ -16,13 +17,15 @@ namespace AWS.Cognito.Net.Providers
         
         public AwsCognitoUserPoolManager(IConfiguration configuration)
         {
-            var basicAwsCredentials = new BasicAWSCredentials(
-                configuration["AWS:Credentials:AccessKey"],
-                configuration["AWS:Credentials:SecretKey"]);
+            var credentials = new CognitoAWSCredentials(
+                configuration["AWS:IdentityPool:AccountId"],
+                configuration["AWS:IdentityPool:PoolID"], 
+                configuration["AWS:IdentityPool:UnauthRoleARN"],
+                configuration["AWS:IdentityPool:AuthRoleARN"],
+                RegionEndpoint.GetBySystemName(configuration["AWS:Region"]) 
+            );
             
-            var amazonCognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient(
-                basicAwsCredentials, 
-                RegionEndpoint.GetBySystemName(configuration["AWS:Region"]));
+            var amazonCognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient(credentials);
 
             _cognitoUserPool = new CognitoUserPool(
                 configuration["AWS:UserPool:PoolID"],
