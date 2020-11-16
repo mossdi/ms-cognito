@@ -8,16 +8,16 @@ namespace AWS.Cognito.Net.Services
 {
     public class UserService<TUser>: IUserService<User>
     {
-        private readonly IUserPoolProvider<User> _userPoolManager;
+        private readonly IUserPoolProvider<User> _userPoolProvider;
 
-        public UserService(IUserPoolProvider<User> userPoolManager)
+        public UserService(IUserPoolProvider<User> userPoolProvider)
         {
-            _userPoolManager = userPoolManager;
+            _userPoolProvider = userPoolProvider;
         }
         
         public async Task<User> SignUp(SignUpForm form)
         {
-            return await _userPoolManager.SignUp(
+            return await _userPoolProvider.SignUp(
                 form.UserName,
                 form.Password,
                 new Dictionary<string, string> {{"email", form.Email}},
@@ -26,21 +26,21 @@ namespace AWS.Cognito.Net.Services
 
         public async Task<bool> ConfirmSignUp(ConfirmSignUpForm form)
         {
-            return await _userPoolManager.ConfirmSignUp(
+            return await _userPoolProvider.ConfirmSignUp(
                 form.UserName,
                 form.ConfirmationCode);
         }
         
         public async Task<User> SignIn(LoginForm form)
         { 
-            return await _userPoolManager.SignIn(
+            return await _userPoolProvider.SignIn(
                 form.UserName,
                 form.Password);
         }
 
         public async Task<User> SignOut(SignOutForm form)
         {
-            return await _userPoolManager.SignOut(
+            return await _userPoolProvider.SignOut(
                 form.UserName);
         }
     }
