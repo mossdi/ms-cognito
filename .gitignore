@@ -365,6 +365,9 @@ paket-files/
 .idea/
 *.sln.iml
 
+# Dev
+appsettings.Development.json
+
 # CodeRush personal settings
 .cr/personal
 
