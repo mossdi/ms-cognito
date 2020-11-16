@@ -10,11 +10,11 @@ using Amazon.CognitoIdentity;
 
 namespace AWS.Cognito.Net.Providers
 {
-    public class AwsCognitoUserPoolManager<TUser>: IUserPoolProvider<User>
+    public class AwsCognitoUserPoolProvider<TUser>: IUserPoolProvider<User>
     {
         private readonly CognitoUserPool _cognitoUserPool;
         
-        public AwsCognitoUserPoolManager(IConfiguration configuration)
+        public AwsCognitoUserPoolProvider(IConfiguration configuration)
         {
             var credentials = new CognitoAWSCredentials(
                 configuration["AWS:IdentityPool:AccountId"],

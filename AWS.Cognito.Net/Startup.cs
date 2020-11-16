@@ -30,7 +30,7 @@ namespace AWS.Cognito.Net
             });
             
             // Dependency Injection
-            services.AddScoped<IUserPoolProvider<User>, AwsCognitoUserPoolManager<User>>();
+            services.AddScoped<IUserPoolProvider<User>, AwsCognitoUserPoolProvider<User>>();
             services.AddScoped<IUserService<User>, UserService<User>>();
         }
         
