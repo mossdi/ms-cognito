@@ -24,7 +24,8 @@ namespace AWS.Cognito.Net.Providers
                 RegionEndpoint.GetBySystemName(configuration["AWS:Region"]) 
             );
             
-            var amazonCognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient(credentials);
+            var amazonCognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient(credentials,
+                RegionEndpoint.GetBySystemName(configuration["AWS:Region"]) );
 
             _cognitoUserPool = new CognitoUserPool(
                 configuration["AWS:UserPool:PoolID"],
