@@ -21,11 +21,11 @@ namespace AWS.Cognito.Net.Providers
                 configuration["AWS:IdentityPool:PoolID"], 
                 configuration["AWS:IdentityPool:UnauthRoleARN"],
                 configuration["AWS:IdentityPool:AuthRoleARN"],
-                RegionEndpoint.GetBySystemName(configuration["AWS:Region"]) 
-            );
+                RegionEndpoint.GetBySystemName(configuration["AWS:Region"]));
             
-            var amazonCognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient(credentials,
-                RegionEndpoint.GetBySystemName(configuration["AWS:Region"]) );
+            var amazonCognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient(
+                credentials,
+                RegionEndpoint.GetBySystemName(configuration["AWS:Region"]));
 
             _cognitoUserPool = new CognitoUserPool(
                 configuration["AWS:UserPool:PoolID"],
