@@ -20,5 +20,7 @@ namespace AWS.Cognito.Net.Interfaces.Providers
             string password);
 
         Task<TUser> SignOut(string userId);
+        
+        Task PasswordReset(string userName);
     }
 }

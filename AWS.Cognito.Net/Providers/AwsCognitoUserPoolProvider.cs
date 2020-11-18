@@ -99,5 +99,12 @@ namespace AWS.Cognito.Net.Providers
                 Email = cognitoUser.Attributes["email"]
             };
         }
+
+        public async Task PasswordReset(string userName)
+        { 
+            var cognitoUser = await _cognitoUserPool.FindByIdAsync(userName);
+
+            await cognitoUser.ForgotPasswordAsync();
+        }
     }
 }

@@ -40,8 +40,12 @@ namespace AWS.Cognito.Net.Services
 
         public async Task<User> SignOut(SignOutForm form)
         {
-            return await _userPoolProvider.SignOut(
-                form.UserName);
+            return await _userPoolProvider.SignOut(form.UserName);
+        }
+
+        public async Task PasswordReset(PasswordResetForm form)
+        {
+            await _userPoolProvider.PasswordReset(form.UserName);
         }
     }
 }
