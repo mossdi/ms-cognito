@@ -5,13 +5,13 @@ namespace AWS.Cognito.Net.Interfaces.Services
 {
     public interface IUserService<TUser>
     {
-        Task<TUser> SignUp(SignUpForm form);
+        Task SignUp(SignUpForm form);
 
         Task ConfirmSignUp(ConfirmSignUpForm form);
         
         Task<TUser> SignIn(LoginForm form);
 
-        Task<TUser> SignOut(SignOutForm form);
+        Task SignOut(SignOutForm form);
 
         Task PasswordReset(PasswordResetForm form);
     }

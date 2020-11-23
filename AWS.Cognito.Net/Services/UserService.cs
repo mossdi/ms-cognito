@@ -15,9 +15,9 @@ namespace AWS.Cognito.Net.Services
             _userPoolProvider = userPoolProvider;
         }
         
-        public async Task<User> SignUp(SignUpForm form)
-        {
-            return await _userPoolProvider.SignUp(
+        public async Task SignUp(SignUpForm form)
+        { 
+            await _userPoolProvider.SignUp(
                 form.UserName,
                 form.Password,
                 new Dictionary<string, string> {{"email", form.Email}},
@@ -38,9 +38,9 @@ namespace AWS.Cognito.Net.Services
                 form.Password);
         }
 
-        public async Task<User> SignOut(SignOutForm form)
-        {
-            return await _userPoolProvider.SignOut(form.UserName);
+        public async Task SignOut(SignOutForm form)
+        { 
+            await _userPoolProvider.SignOut(form.UserName);
         }
 
         public async Task PasswordReset(PasswordResetForm form)

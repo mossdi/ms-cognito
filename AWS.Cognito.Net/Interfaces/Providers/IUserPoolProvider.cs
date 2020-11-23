@@ -5,7 +5,7 @@ namespace AWS.Cognito.Net.Interfaces.Providers
 {
     public interface IUserPoolProvider<TUser>
     { 
-        Task<TUser> SignUp(
+        Task SignUp(
             string userId,
             string password,
             Dictionary<string, string> attributes,
@@ -19,7 +19,7 @@ namespace AWS.Cognito.Net.Interfaces.Providers
             string userId,
             string password);
 
-        Task<TUser> SignOut(string userId);
+        Task SignOut(string userId);
         
         Task PasswordReset(string userName);
     }

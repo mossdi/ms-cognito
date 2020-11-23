@@ -34,7 +34,7 @@ namespace AWS.Cognito.Net.Providers
                 configuration["AWS:UserPool:ClientSecret"]);
         }
         
-        public async Task<User> SignUp(
+        public async Task SignUp(
             string userName, 
             string password, 
             Dictionary<string, string> attributes, 
@@ -45,14 +45,6 @@ namespace AWS.Cognito.Net.Providers
                 password,
                 attributes,
                 validationData);
-            
-            var cognitoUser = await _cognitoUserPool.FindByIdAsync(userName);
-
-            return new User // TODO: Change it to AutoMapping
-            {
-                UserName = cognitoUser.Username,
-                Email = cognitoUser.Attributes["email"]
-            };
         }
         
         public async Task ConfirmSignUp(
@@ -87,17 +79,11 @@ namespace AWS.Cognito.Net.Providers
             };
         }
 
-        public async Task<User> SignOut(string userName)
+        public async Task SignOut(string userName)
         {
             var cognitoUser = await _cognitoUserPool.FindByIdAsync(userName);
             
             cognitoUser.SignOut();
-            
-            return new User // TODO: Change it to AutoMapping
-            {
-                UserName = cognitoUser.Username,
-                Email = cognitoUser.Attributes["email"]
-            };
         }
 
         public async Task PasswordReset(string userName)
