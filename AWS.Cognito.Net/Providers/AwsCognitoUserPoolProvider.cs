@@ -51,11 +51,8 @@ namespace AWS.Cognito.Net.Providers
             string userName,
             string confirmationCode)
         {
-            var cognitoUser = await _cognitoUserPool.FindByIdAsync(userName);
-            
-            await cognitoUser.ConfirmSignUpAsync(
-                confirmationCode,
-                false);
+            await _cognitoUserPool.GetUser(userName)
+                .ConfirmSignUpAsync(confirmationCode, false);
         }
         
         public async Task<User> SignIn(            
