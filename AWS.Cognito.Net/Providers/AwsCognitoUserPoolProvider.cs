@@ -74,17 +74,13 @@ namespace AWS.Cognito.Net.Providers
         }
 
         public async Task SignOut(string userName)
-        {
-            var cognitoUser = await _cognitoUserPool.FindByIdAsync(userName);
-            
-            cognitoUser.SignOut();
+        { 
+            _cognitoUserPool.GetUser(userName).SignOut();
         }
 
         public async Task PasswordReset(string userName)
         { 
-            var cognitoUser = await _cognitoUserPool.FindByIdAsync(userName);
-
-            await cognitoUser.ForgotPasswordAsync();
+            await _cognitoUserPool.GetUser(userName).ForgotPasswordAsync();
         }
     }
 }
