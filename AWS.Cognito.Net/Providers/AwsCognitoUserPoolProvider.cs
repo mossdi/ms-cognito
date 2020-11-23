@@ -19,7 +19,7 @@ namespace AWS.Cognito.Net.Providers
             var credentials = new CognitoAWSCredentials(
                 configuration["AWS:IdentityPool:AccountId"],
                 configuration["AWS:IdentityPool:PoolID"], 
-                configuration["AWS:IdentityPool:UnauthRoleARN"],
+                configuration["AWS:IdentityPool:UnAuthRoleARN"],
                 configuration["AWS:IdentityPool:AuthRoleARN"],
                 RegionEndpoint.GetBySystemName(configuration["AWS:Region"]));
             
