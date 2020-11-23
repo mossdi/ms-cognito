@@ -59,19 +59,16 @@ namespace AWS.Cognito.Net.Providers
             string userName, 
             string password)
         {
-            var cognitoUser = await _cognitoUserPool.FindByIdAsync(userName);
+            var cognitoUser = _cognitoUserPool.GetUser(userName);
             
-            var authRequest = new InitiateSrpAuthRequest()
-            {
-                Password = password
-            };
+            await cognitoUser.StartWithSrpAuthAsync(new InitiateSrpAuthRequest { Password = password });
             
-            await cognitoUser.StartWithSrpAuthAsync(authRequest);
+            var userDetails = await cognitoUser.GetUserDetailsAsync();
             
             return new User // TODO: Change it to AutoMapping
             {
-                UserName = cognitoUser.Username,
-                Email = cognitoUser.Attributes["email"],
+                UserName = userDetails.Username,
+                Email = userDetails.UserAttributes.Find(attribute => attribute.Name.Equals("email"))?.Value,
                 Token = cognitoUser.SessionTokens.AccessToken
             };
         }
