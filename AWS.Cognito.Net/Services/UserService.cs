@@ -47,5 +47,13 @@ namespace AWS.Cognito.Net.Services
         {
             await _userPoolProvider.PasswordReset(form.UserName);
         }
+
+        public async Task ConfirmPasswordReset(ConfirmPasswordResetForm form)
+        {
+            await _userPoolProvider.ConfirmPasswordReset(
+                form.UserName,
+                form.ConfirmationCode,
+                form.NewPassword);
+        }
     }
 }

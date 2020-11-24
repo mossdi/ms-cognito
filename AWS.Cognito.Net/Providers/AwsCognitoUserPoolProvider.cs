@@ -1,4 +1,5 @@
 using Amazon;
+using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
 using AWS.Cognito.Net.Interfaces.Providers;
@@ -6,7 +7,6 @@ using AWS.Cognito.Net.Models;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Amazon.CognitoIdentity;
 
 namespace AWS.Cognito.Net.Providers
 {
@@ -81,6 +81,15 @@ namespace AWS.Cognito.Net.Providers
         public async Task PasswordReset(string userName)
         { 
             await _cognitoUserPool.GetUser(userName).ForgotPasswordAsync();
+        }
+        
+        public async Task ConfirmPasswordReset(
+            string userName,
+            string confirmationCode,
+            string newPassword)
+        { 
+            await _cognitoUserPool.GetUser(userName)
+                .ConfirmForgotPasswordAsync(confirmationCode, newPassword);
         }
     }
 }

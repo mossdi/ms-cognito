@@ -50,5 +50,12 @@ namespace AWS.Cognito.Net.Controllers
         { 
             await _userService.PasswordReset(form);
         }
+
+        [HttpPost]
+        [Route("[action]")]
+        public async Task ConfirmPasswordReset(ConfirmPasswordResetForm form)
+        {
+            await _userService.ConfirmPasswordReset(form);
+        }
     }
 }

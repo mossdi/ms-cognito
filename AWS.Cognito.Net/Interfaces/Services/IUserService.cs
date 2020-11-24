@@ -14,5 +14,7 @@ namespace AWS.Cognito.Net.Interfaces.Services
         Task SignOut(SignOutForm form);
 
         Task PasswordReset(PasswordResetForm form);
+
+        Task ConfirmPasswordReset(ConfirmPasswordResetForm form);
     }
 }
