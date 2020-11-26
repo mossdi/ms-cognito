@@ -6,6 +6,8 @@ namespace AWS.Cognito.Net.Models
         
         public string Email { get; init; }
         
-        public string Token { get; init; }
+        public string AccessToken { get; init; }
+        
+        public string IdentityToken { get; init; }
     }
 }
