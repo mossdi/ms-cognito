@@ -2,11 +2,14 @@ using Amazon;
 using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
+using Microsoft.Extensions.Configuration;
 using AWS.Cognito.Net.Interfaces.Providers;
 using AWS.Cognito.Net.Models;
-using Microsoft.Extensions.Configuration;
+using System.IdentityModel.Tokens.Jwt;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections;
+using System.Linq;
 
 namespace AWS.Cognito.Net.Providers
 {
@@ -64,6 +67,7 @@ namespace AWS.Cognito.Net.Providers
             await cognitoUser.StartWithSrpAuthAsync(new InitiateSrpAuthRequest { Password = password });
             
             var userDetails = await cognitoUser.GetUserDetailsAsync();
+            var userRoles = await GetUserRoles(cognitoUser);
             
             return new User // TODO: Change it to AutoMapping
             {
@@ -91,6 +95,18 @@ namespace AWS.Cognito.Net.Providers
         { 
             await _cognitoUserPool.GetUser(userName)
                 .ConfirmForgotPasswordAsync(confirmationCode, newPassword);
+        }
+
+        private static async Task<ArrayList> GetUserRoles(CognitoUser cognitoUser)
+        {
+            var userRoles = new ArrayList();
+            
+            new JwtSecurityTokenHandler()
+                .ReadJwtToken(cognitoUser.SessionTokens.IdToken).Claims.ToList()
+                .FindAll(claim => claim.Type.Equals("cognito:roles"))
+                .ForEach(claim => userRoles.Add(claim.Value));
+
+            return userRoles;
         }
     }
 }
