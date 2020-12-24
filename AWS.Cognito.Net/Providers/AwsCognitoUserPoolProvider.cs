@@ -15,7 +15,6 @@ namespace AWS.Cognito.Net.Providers
         private readonly string _identityPoolId;
         private readonly RegionEndpoint _regionEndpoint;
         private readonly CognitoUserPool _cognitoUserPool;
-        private readonly AmazonCognitoIdentityClient _cognitoIdentityClient;
         
         public AwsCognitoUserPoolProvider(IConfiguration configuration)
         {
@@ -25,8 +24,6 @@ namespace AWS.Cognito.Net.Providers
             var credentials = new CognitoAWSCredentials(_identityPoolId, _regionEndpoint);
             var amazonCognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient(credentials, _regionEndpoint);
 
-            _cognitoIdentityClient = new AmazonCognitoIdentityClient(credentials, _regionEndpoint);
-            
             _cognitoUserPool = new CognitoUserPool(
                 configuration["AWS:UserPool:PoolID"],
                 configuration["AWS:UserPool:ClientID"], 
