@@ -7,7 +7,6 @@ using AWS.Cognito.Net.Models;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace AWS.Cognito.Net.Providers
 {
