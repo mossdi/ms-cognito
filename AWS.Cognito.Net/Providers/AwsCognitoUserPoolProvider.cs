@@ -64,12 +64,9 @@ namespace AWS.Cognito.Net.Providers
             await cognitoUser.StartWithSrpAuthAsync(new InitiateSrpAuthRequest { Password = password });
             var userDetails = await cognitoUser.GetUserDetailsAsync();
 
-            var authenticatedIdentityCredentials = cognitoUser.GetCognitoAWSCredentials(_identityPoolId, _regionEndpoint);
-            
-            var credentials = await _cognitoIdentityClient.GetCredentialsForIdentityAsync(
-                await authenticatedIdentityCredentials.GetIdentityIdAsync(),
-                authenticatedIdentityCredentials.CurrentLoginProviders
-                    .ToDictionary(provider => provider, _ => cognitoUser.SessionTokens.IdToken));
+            var credentials = await cognitoUser
+                .GetCognitoAWSCredentials(_identityPoolId, _regionEndpoint)
+                .GetCredentialsAsync();
             
             return new User
             {
