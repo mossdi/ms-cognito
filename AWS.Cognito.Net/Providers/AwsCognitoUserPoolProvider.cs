@@ -22,12 +22,11 @@ namespace AWS.Cognito.Net.Providers
             _regionEndpoint = RegionEndpoint.GetBySystemName(configuration["AWS:Region"]); 
             
             var credentials = new CognitoAWSCredentials(_identityPoolId, _regionEndpoint);
-            var amazonCognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient(credentials, _regionEndpoint);
 
             _cognitoUserPool = new CognitoUserPool(
                 configuration["AWS:UserPool:PoolID"],
                 configuration["AWS:UserPool:ClientID"], 
-                amazonCognitoIdentityProviderClient,
+                new AmazonCognitoIdentityProviderClient(credentials, _regionEndpoint),
                 configuration["AWS:UserPool:ClientSecret"]);
         }
         
