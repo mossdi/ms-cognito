@@ -65,10 +65,9 @@ namespace AWS.Cognito.Net.Providers
             
             return new User
             {
-                UserName = userDetails.Username,
-                Email = userDetails.UserAttributes.Find(attribute => attribute.Name.Equals("email"))?.Value,
-                AccessToken = cognitoUser.SessionTokens.AccessToken,
-                IdentityToken = cognitoUser.SessionTokens.IdToken,
+                AccessKey = credentials.AccessKey,
+                SecretKey = credentials.SecretKey,
+                SecurityToken = credentials.Token
             };
         }
 
