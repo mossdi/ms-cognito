@@ -4,6 +4,7 @@ WORKDIR /app
 COPY *.sln .
 COPY AWS.Cognito.Net/*.csproj ./AWS.Cognito.Net/
 WORKDIR /app/AWS.Cognito.Net
+RUN dotnet nuget locals all -c
 RUN dotnet restore
 
 COPY AWS.Cognito.Net/. /app/AWS.Cognito.Net/
