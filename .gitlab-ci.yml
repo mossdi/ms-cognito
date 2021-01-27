@@ -1,0 +1,28 @@
+stages:
+  - build-docker-container
+  - deploy
+
+deploy app:
+  stage: build-docker-container
+  tags:
+    - build-docker
+  only:
+    - dev
+  variables:
+    TAG: repo.cappers.ca/futurewise-v2/sandbox-cognito:latest
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD repo.cappers.ca:5050
+    - docker build -t $TAG .
+    - docker push $TAG
+
+
+
+#deploy:
+#  stage: deploy
+#  tags:
+#    - build-docker
+#  script:
+#    # start deploy
+#    - ssh root@159.203.13.240 "cd /app/futurewise/; docker pull repo.cappers.ca:5050/futurewise-ede/ms-ede-ses:latest; docker-compose down; docker-compose up -d"
+#  only:
+#    - dev
