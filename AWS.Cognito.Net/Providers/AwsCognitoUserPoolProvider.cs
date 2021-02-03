@@ -2,12 +2,11 @@ using Amazon;
 using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
+using Microsoft.Extensions.Configuration;
 using AWS.Cognito.Net.Interfaces.Providers;
 using AWS.Cognito.Net.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Amazon.CognitoIdentityProvider.Model;
 
 namespace AWS.Cognito.Net.Providers
 {
@@ -16,7 +15,6 @@ namespace AWS.Cognito.Net.Providers
         private readonly string _identityPoolId;
         private readonly RegionEndpoint _regionEndpoint;
         private readonly CognitoUserPool _cognitoUserPool;
-        private readonly IAmazonCognitoIdentityProvider _identityProvider;
         
         public AwsCognitoUserPoolProvider(IConfiguration configuration)
         {
@@ -30,10 +28,6 @@ namespace AWS.Cognito.Net.Providers
                 configuration["AWS:UserPool:ClientID"], 
                 new AmazonCognitoIdentityProviderClient(credentials, _regionEndpoint),
                 configuration["AWS:UserPool:ClientSecret"]);
-            
-            _identityProvider = new AmazonCognitoIdentityProviderClient(
-                credentials,
-                _regionEndpoint);
         }
         
         public async Task SignUp(
@@ -47,13 +41,6 @@ namespace AWS.Cognito.Net.Providers
                 password,
                 attributes,
                 validationData);
-
-            await _identityProvider.AdminAddUserToGroupAsync(new AdminAddUserToGroupRequest
-            {
-                GroupName = "Clients", // TODO: Decide how to manage this parameter
-                Username = userName,
-                UserPoolId = _cognitoUserPool.PoolID
-            });
         }
         
         public async Task ConfirmSignUp(
