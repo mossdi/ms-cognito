@@ -7,5 +7,7 @@ namespace AWS.Cognito.Net.Models
         public string SecretKey { get; init; }
         
         public string SecurityToken { get; init; }
+        
+        public string RefreshToken { get; init; }
     }
 }

@@ -1,33 +1,46 @@
 using Amazon;
 using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider;
+using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
 using Microsoft.Extensions.Configuration;
 using AWS.Cognito.Net.Interfaces.Providers;
 using AWS.Cognito.Net.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace AWS.Cognito.Net.Providers
 {
     public class AwsCognitoUserPoolProvider<TUser>: IUserPoolProvider<User>
     {
+        private readonly string _poolId;
+        private readonly string _clientId;
+        private readonly string _clientSecret;
         private readonly string _identityPoolId;
         private readonly RegionEndpoint _regionEndpoint;
         private readonly CognitoUserPool _cognitoUserPool;
+        private readonly AmazonCognitoIdentityProviderClient _cognitoIdentityProvider;
         
         public AwsCognitoUserPoolProvider(IConfiguration configuration)
         {
+            _poolId = configuration["AWS:UserPool:PoolID"];
+            _clientId = configuration["AWS:UserPool:ClientID"];
+            _clientSecret = configuration["AWS:UserPool:ClientSecret"];
             _identityPoolId = configuration["AWS:IdentityPool:PoolID"];
             _regionEndpoint = RegionEndpoint.GetBySystemName(configuration["AWS:Region"]); 
             
             var credentials = new CognitoAWSCredentials(_identityPoolId, _regionEndpoint);
 
+            _cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(
+                credentials, 
+                _regionEndpoint);
+            
             _cognitoUserPool = new CognitoUserPool(
-                configuration["AWS:UserPool:PoolID"],
-                configuration["AWS:UserPool:ClientID"], 
-                new AmazonCognitoIdentityProviderClient(credentials, _regionEndpoint),
-                configuration["AWS:UserPool:ClientSecret"]);
+                _poolId,
+                _clientId, 
+                _cognitoIdentityProvider,
+                _clientSecret);
         }
         
         public async Task SignUp(
@@ -67,13 +80,44 @@ namespace AWS.Cognito.Net.Providers
             {
                 AccessKey = credentials.AccessKey,
                 SecretKey = credentials.SecretKey,
-                SecurityToken = credentials.Token
+                SecurityToken = credentials.Token,
+                RefreshToken = cognitoUser.SessionTokens.RefreshToken,
             };
         }
 
-        public Task<User> RefreshTokens(string refreshToken)
+        public async Task<User> RefreshTokens(
+            string refreshToken)
         {
-            throw new System.NotImplementedException();
+            var authResponse = await _cognitoIdentityProvider.InitiateAuthAsync(new InitiateAuthRequest
+            {
+                ClientId = _clientId,
+                AuthFlow = AuthFlowType.REFRESH_TOKEN_AUTH,
+                AuthParameters = new Dictionary<string, string> {{"REFRESH_TOKEN", refreshToken}}
+            });
+
+            var authIssuedTime = DateTime.Now;
+            var authExpirationTime = authIssuedTime.AddSeconds(authResponse.AuthenticationResult.ExpiresIn); 
+            
+            var cognitoUser = _cognitoUserPool.GetUser();
+            
+            cognitoUser.SessionTokens = new CognitoUserSession(
+                authResponse.AuthenticationResult.IdToken,
+                authResponse.AuthenticationResult.AccessToken,
+                refreshToken,
+                authIssuedTime,
+                authExpirationTime);
+            
+            var credentials = await cognitoUser
+                .GetCognitoAWSCredentials(_identityPoolId, _regionEndpoint)
+                .GetCredentialsAsync();
+            
+            return new User
+            {
+                AccessKey = credentials.AccessKey,
+                SecretKey = credentials.SecretKey,
+                SecurityToken = credentials.Token,
+                RefreshToken = cognitoUser.SessionTokens.RefreshToken,
+            };
         }
 
         public async Task SignOut(string userName)
