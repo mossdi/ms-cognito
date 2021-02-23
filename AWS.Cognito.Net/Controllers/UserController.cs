@@ -7,7 +7,7 @@ namespace AWS.Cognito.Net.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : Controller
+    public class UserController: Controller
     {
         private readonly IUserService<User> _userService;
         
