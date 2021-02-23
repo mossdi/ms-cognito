@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AWS.Cognito.Net.Services
 {
-    public class UserService<TUser>: IUserService<User>
+    public class UserService<TUser> : IUserService<User>
     {
         private readonly IUserPoolProvider<User> _userPoolProvider;
 

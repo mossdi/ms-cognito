@@ -12,7 +12,7 @@ using System;
 
 namespace AWS.Cognito.Net.Providers
 {
-    public class AwsCognitoUserPoolProvider<TUser>: IUserPoolProvider<User>
+    public class AwsCognitoUserPoolProvider<TUser> : IUserPoolProvider<User>
     {
         private readonly string _poolId;
         private readonly string _clientId;
