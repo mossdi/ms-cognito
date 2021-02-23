@@ -71,6 +71,11 @@ namespace AWS.Cognito.Net.Providers
             };
         }
 
+        public Task<User> RefreshTokens(string refreshToken)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public async Task SignOut(string userName)
         { 
             _cognitoUserPool.GetUser(userName).SignOut();

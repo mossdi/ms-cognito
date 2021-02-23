@@ -10,6 +10,8 @@ namespace AWS.Cognito.Net.Interfaces.Services
         Task ConfirmSignUp(ConfirmSignUpForm form);
         
         Task<TUser> SignIn(LoginForm form);
+        
+        Task<TUser> RefreshTokens(RefreshTokensForm form);
 
         Task SignOut(SignOutForm form);
 

@@ -39,6 +39,13 @@ namespace AWS.Cognito.Net.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        public async Task<User> RefreshTokens(RefreshTokensForm form)
+        {
+            return await _userService.RefreshTokens(form);
+        }
+
+        [HttpPost]
+        [Route("[action]")]
         public async Task SignOut(SignOutForm form)
         { 
             await _userService.SignOut(form);

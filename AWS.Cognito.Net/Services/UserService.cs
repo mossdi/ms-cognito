@@ -38,6 +38,12 @@ namespace AWS.Cognito.Net.Services
                 form.Password);
         }
 
+        public Task<User> RefreshTokens(RefreshTokensForm form)
+        {
+            return _userPoolProvider.RefreshTokens(
+                form.RefreshToken);
+        }
+
         public async Task SignOut(SignOutForm form)
         { 
             await _userPoolProvider.SignOut(form.UserName);
