@@ -1,4 +1,5 @@
 using Amazon;
+using Amazon.Runtime;
 using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
@@ -70,11 +71,7 @@ namespace AWS.Cognito.Net.Providers
         {
             var cognitoUser = _cognitoUserPool.GetUser(userName);
             await cognitoUser.StartWithSrpAuthAsync(new InitiateSrpAuthRequest { Password = password });
-            var userDetails = await cognitoUser.GetUserDetailsAsync();
-
-            var credentials = await cognitoUser
-                .GetCognitoAWSCredentials(_identityPoolId, _regionEndpoint)
-                .GetCredentialsAsync();
+            var credentials = await GetUserCredentials(cognitoUser);
             
             return new User
             {
@@ -107,9 +104,7 @@ namespace AWS.Cognito.Net.Providers
                 authIssuedTime,
                 authExpirationTime);
             
-            var credentials = await cognitoUser
-                .GetCognitoAWSCredentials(_identityPoolId, _regionEndpoint)
-                .GetCredentialsAsync();
+            var credentials = await GetUserCredentials(cognitoUser);
             
             return new User
             {
@@ -137,6 +132,13 @@ namespace AWS.Cognito.Net.Providers
         { 
             await _cognitoUserPool.GetUser(userName)
                 .ConfirmForgotPasswordAsync(confirmationCode, newPassword);
+        }
+
+        private async Task<ImmutableCredentials> GetUserCredentials(CognitoUser user)
+        {
+            return await user
+                .GetCognitoAWSCredentials(_identityPoolId, _regionEndpoint)
+                .GetCredentialsAsync();
         }
     }
 }
