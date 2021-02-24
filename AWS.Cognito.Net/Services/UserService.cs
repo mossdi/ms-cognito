@@ -16,11 +16,14 @@ namespace AWS.Cognito.Net.Services
         }
         
         public async Task SignUp(SignUpForm form)
-        { 
+        {
+            var attributes = new Dictionary<string, string>();
+            if (form.Email != null) attributes.Add("email", form.Email);
+
             await _userPoolProvider.SignUp(
                 form.UserName,
                 form.Password,
-                new Dictionary<string, string> {{"email", form.Email}},
+                attributes,
                 null);
         }
 
