@@ -21,6 +21,7 @@ namespace AWS.Cognito.Net.Providers
         private readonly string _identityPoolId;
         private readonly RegionEndpoint _regionEndpoint;
         private readonly CognitoUserPool _cognitoUserPool;
+        private readonly CognitoAWSCredentials _cognitoAwsCredentials;
         private readonly AmazonCognitoIdentityProviderClient _cognitoIdentityProvider;
         
         public AwsCognitoUserPoolProvider(IConfiguration configuration)
@@ -31,10 +32,12 @@ namespace AWS.Cognito.Net.Providers
             _identityPoolId = configuration["AWS:IdentityPool:PoolID"];
             _regionEndpoint = RegionEndpoint.GetBySystemName(configuration["AWS:Region"]); 
             
-            var credentials = new CognitoAWSCredentials(_identityPoolId, _regionEndpoint);
+            _cognitoAwsCredentials = new CognitoAWSCredentials(
+                _identityPoolId, 
+                _regionEndpoint);
 
             _cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(
-                credentials, 
+                _cognitoAwsCredentials, 
                 _regionEndpoint);
             
             _cognitoUserPool = new CognitoUserPool(
@@ -84,7 +87,14 @@ namespace AWS.Cognito.Net.Providers
 
         public async Task<User> SignInGuest()
         {
-            throw new NotImplementedException();
+            var credentials = await _cognitoAwsCredentials.GetCredentialsAsync();
+            
+            return new User
+            {
+                AccessKey = credentials.AccessKey,
+                SecretKey = credentials.SecretKey,
+                SecurityToken = credentials.Token,
+            }; 
         }
 
         public async Task<User> RefreshTokens(
