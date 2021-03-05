@@ -41,6 +41,11 @@ namespace AWS.Cognito.Net.Services
                 form.Password);
         }
 
+        public async Task<User> SignInGuest(LoginGuestForm form)
+        {
+            return await _userPoolProvider.SignInGuest();
+        }
+
         public Task<User> RefreshTokens(RefreshTokensForm form)
         {
             return _userPoolProvider.RefreshTokens(

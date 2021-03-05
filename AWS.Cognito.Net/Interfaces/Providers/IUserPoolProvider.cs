@@ -19,6 +19,8 @@ namespace AWS.Cognito.Net.Interfaces.Providers
             string userId,
             string password);
 
+        Task<TUser> SignInGuest();
+
         Task<TUser> RefreshTokens(
             string refreshToken);
         

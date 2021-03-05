@@ -82,6 +82,11 @@ namespace AWS.Cognito.Net.Providers
             };
         }
 
+        public async Task<User> SignInGuest()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<User> RefreshTokens(
             string refreshToken)
         {
