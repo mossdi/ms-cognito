@@ -1,5 +1,4 @@
 using Amazon;
-using Amazon.Runtime;
 using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
@@ -74,27 +73,18 @@ namespace AWS.Cognito.Net.Providers
         {
             var cognitoUser = _cognitoUserPool.GetUser(userName);
             await cognitoUser.StartWithSrpAuthAsync(new InitiateSrpAuthRequest { Password = password });
-            var credentials = await GetUserCredentials(cognitoUser);
             
             return new User
             {
-                AccessKey = credentials.AccessKey,
-                SecretKey = credentials.SecretKey,
-                SecurityToken = credentials.Token,
+                AccessToken = cognitoUser.SessionTokens.AccessToken,
+                IdentityToken = cognitoUser.SessionTokens.IdToken,
                 RefreshToken = cognitoUser.SessionTokens.RefreshToken,
             };
         }
 
         public async Task<User> SignInGuest()
         {
-            var credentials = await _cognitoAwsCredentials.GetCredentialsAsync();
-            
-            return new User
-            {
-                AccessKey = credentials.AccessKey,
-                SecretKey = credentials.SecretKey,
-                SecurityToken = credentials.Token,
-            }; 
+            throw new NotImplementedException();
         }
 
         public async Task<User> RefreshTokens(
@@ -106,27 +96,12 @@ namespace AWS.Cognito.Net.Providers
                 AuthFlow = AuthFlowType.REFRESH_TOKEN_AUTH,
                 AuthParameters = new Dictionary<string, string> {{"REFRESH_TOKEN", refreshToken}}
             });
-
-            var authIssuedTime = DateTime.Now;
-            var authExpirationTime = authIssuedTime.AddSeconds(authResponse.AuthenticationResult.ExpiresIn); 
-            
-            var cognitoUser = _cognitoUserPool.GetUser();
-            
-            cognitoUser.SessionTokens = new CognitoUserSession(
-                authResponse.AuthenticationResult.IdToken,
-                authResponse.AuthenticationResult.AccessToken,
-                refreshToken,
-                authIssuedTime,
-                authExpirationTime);
-            
-            var credentials = await GetUserCredentials(cognitoUser);
             
             return new User
             {
-                AccessKey = credentials.AccessKey,
-                SecretKey = credentials.SecretKey,
-                SecurityToken = credentials.Token,
-                RefreshToken = cognitoUser.SessionTokens.RefreshToken,
+                AccessToken = authResponse.AuthenticationResult.AccessToken,
+                IdentityToken = authResponse.AuthenticationResult.IdToken,
+                RefreshToken = refreshToken,
             };
         }
 
@@ -147,13 +122,6 @@ namespace AWS.Cognito.Net.Providers
         { 
             await _cognitoUserPool.GetUser(userName)
                 .ConfirmForgotPasswordAsync(confirmationCode, newPassword);
-        }
-
-        private async Task<ImmutableCredentials> GetUserCredentials(CognitoUser user)
-        {
-            return await user
-                .GetCognitoAWSCredentials(_identityPoolId, _regionEndpoint)
-                .GetCredentialsAsync();
         }
     }
 }
