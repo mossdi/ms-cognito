@@ -1,88 +1,83 @@
-using Amazon;
-using Amazon.CognitoIdentity;
-using Amazon.CognitoIdentityProvider;
-using Amazon.CognitoIdentityProvider.Model;
-using Amazon.Extensions.CognitoAuthentication;
-using Microsoft.Extensions.Configuration;
-using AWS.Cognito.Net.Interfaces.Providers;
-using AWS.Cognito.Net.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
+// <copyright file="AwsCognitoUserPoolProvider.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace AWS.Cognito.Net.Providers
 {
-    public class AwsCognitoUserPoolProvider<TUser> : IUserPoolProvider<User>
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Amazon;
+    using Amazon.CognitoIdentity;
+    using Amazon.CognitoIdentityProvider;
+    using Amazon.CognitoIdentityProvider.Model;
+    using Amazon.Extensions.CognitoAuthentication;
+    using AWS.Cognito.Net.Interfaces.Providers;
+    using AWS.Cognito.Net.Models;
+    using Microsoft.Extensions.Configuration;
+
+    public class AwsCognitoUserPoolProvider : IUserPoolProvider<User>
     {
-        private readonly string _poolId;
-        private readonly string _clientId;
-        private readonly string _clientSecret;
-        private readonly string _identityPoolId;
-        private readonly RegionEndpoint _regionEndpoint;
-        private readonly CognitoUserPool _cognitoUserPool;
-        private readonly CognitoAWSCredentials _cognitoAwsCredentials;
-        private readonly AmazonCognitoIdentityProviderClient _cognitoIdentityProvider;
-        
+        private readonly string clientId;
+        private readonly CognitoUserPool cognitoUserPool;
+        private readonly AmazonCognitoIdentityProviderClient cognitoIdentityProvider;
+
         public AwsCognitoUserPoolProvider(IConfiguration configuration)
         {
-            _poolId = configuration["AWS:UserPool:PoolID"];
-            _clientId = configuration["AWS:UserPool:ClientID"];
-            _clientSecret = configuration["AWS:UserPool:ClientSecret"];
-            _identityPoolId = configuration["AWS:IdentityPool:PoolID"];
-            _regionEndpoint = RegionEndpoint.GetBySystemName(configuration["AWS:Region"]); 
-            
-            _cognitoAwsCredentials = new CognitoAWSCredentials(
-                _identityPoolId, 
-                _regionEndpoint);
+            string poolId = configuration["AWS:UserPool:PoolID"];
+            this.clientId = configuration["AWS:UserPool:ClientID"];
+            string clientSecret = configuration["AWS:UserPool:ClientSecret"];
+            string identityPoolId = configuration["AWS:IdentityPool:PoolID"];
+            RegionEndpoint regionEndpoint = RegionEndpoint.GetBySystemName(configuration["AWS:Region"]);
 
-            _cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(
-                _cognitoAwsCredentials, 
-                _regionEndpoint);
-            
-            _cognitoUserPool = new CognitoUserPool(
-                _poolId,
-                _clientId, 
-                _cognitoIdentityProvider,
-                _clientSecret);
+            CognitoAWSCredentials cognitoAwsCredentials = new(identityPoolId, regionEndpoint);
+
+            this.cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(
+                cognitoAwsCredentials,
+                regionEndpoint);
+
+            this.cognitoUserPool = new CognitoUserPool(
+                poolId,
+                this.clientId,
+                this.cognitoIdentityProvider,
+                clientSecret);
         }
-        
+
         public async Task SignUp(
-            string userName, 
-            string password, 
-            Dictionary<string, string> attributes, 
-            Dictionary<string, string> validationData)
+            string userName,
+            string password,
+            IDictionary<string, string> attributes,
+            IDictionary<string, string>? validationData)
         {
-            await _cognitoUserPool.SignUpAsync(
+            await this.cognitoUserPool.SignUpAsync(
                 userName,
                 password,
                 attributes,
                 validationData);
         }
-        
+
         public async Task ConfirmSignUp(
             string userName,
             string confirmationCode)
         {
-            await _cognitoUserPool.GetUser(userName)
+            await this.cognitoUserPool.GetUser(userName)
                 .ConfirmSignUpAsync(confirmationCode, false);
         }
-        
-        public async Task<User> SignIn(            
-            string userName, 
+
+        public async Task<User> SignIn(
+            string userName,
             string password)
         {
-            var cognitoUser = _cognitoUserPool.GetUser(userName);
+            var cognitoUser = this.cognitoUserPool.GetUser(userName);
             await cognitoUser.StartWithSrpAuthAsync(new InitiateSrpAuthRequest { Password = password });
-            
-            return new User
-            {
-                AccessToken = cognitoUser.SessionTokens.AccessToken,
-                IdentityToken = cognitoUser.SessionTokens.IdToken,
-                RefreshToken = cognitoUser.SessionTokens.RefreshToken,
-            };
+
+            return new User(
+                cognitoUser.SessionTokens.AccessToken,
+                cognitoUser.SessionTokens.IdToken,
+                cognitoUser.SessionTokens.RefreshToken);
         }
 
-        public async Task<User> SignInGuest()
+        public Task<User> SignInGuest()
         {
             throw new NotImplementedException();
         }
@@ -90,37 +85,36 @@ namespace AWS.Cognito.Net.Providers
         public async Task<User> RefreshTokens(
             string refreshToken)
         {
-            var authResponse = await _cognitoIdentityProvider.InitiateAuthAsync(new InitiateAuthRequest
+            var authResponse = await this.cognitoIdentityProvider.InitiateAuthAsync(new InitiateAuthRequest
             {
-                ClientId = _clientId,
+                ClientId = this.clientId,
                 AuthFlow = AuthFlowType.REFRESH_TOKEN_AUTH,
-                AuthParameters = new Dictionary<string, string> {{"REFRESH_TOKEN", refreshToken}}
+                AuthParameters = new Dictionary<string, string>(StringComparer.Ordinal) { { "REFRESH_TOKEN", refreshToken } },
             });
-            
-            return new User
-            {
-                AccessToken = authResponse.AuthenticationResult.AccessToken,
-                IdentityToken = authResponse.AuthenticationResult.IdToken,
-                RefreshToken = refreshToken,
-            };
+
+            return new User(
+                authResponse.AuthenticationResult.AccessToken,
+                authResponse.AuthenticationResult.IdToken,
+                refreshToken);
         }
 
-        public async Task SignOut(string userName)
-        { 
-            _cognitoUserPool.GetUser(userName).SignOut();
+        public Task SignOut(string userName)
+        {
+            this.cognitoUserPool.GetUser(userName).SignOut();
+            return Task.CompletedTask;
         }
 
-        public async Task PasswordReset(string userName)
-        { 
-            await _cognitoUserPool.GetUser(userName).ForgotPasswordAsync();
+        public Task PasswordReset(string userName)
+        {
+            return this.cognitoUserPool.GetUser(userName).ForgotPasswordAsync();
         }
-        
+
         public async Task ConfirmPasswordReset(
             string userName,
             string confirmationCode,
             string newPassword)
-        { 
-            await _cognitoUserPool.GetUser(userName)
+        {
+            await this.cognitoUserPool.GetUser(userName)
                 .ConfirmForgotPasswordAsync(confirmationCode, newPassword);
         }
     }

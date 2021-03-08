@@ -1,15 +1,26 @@
-using System.ComponentModel.DataAnnotations;
+// <copyright file="SignUpForm.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace AWS.Cognito.Net.Models
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class SignUpForm
     {
+        public SignUpForm(string userName, string password, string email)
+        {
+            this.UserName = userName;
+            this.Password = password;
+            this.Email = email;
+        }
+
         [Required]
-        public string UserName { get; set; }
-        
+        public string UserName { get; }
+
         [Required]
-        public string Password { get; set; }
-        
-        public string Email { get; set; }
+        public string Password { get; }
+
+        public string Email { get; }
     }
 }

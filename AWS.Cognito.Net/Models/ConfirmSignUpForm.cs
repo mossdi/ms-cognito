@@ -1,13 +1,23 @@
-using System.ComponentModel.DataAnnotations;
+// <copyright file="ConfirmSignUpForm.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace AWS.Cognito.Net.Models
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class ConfirmSignUpForm
     {
-        [Required]
-        public string UserName { get; set; }
+        public ConfirmSignUpForm(string userName, string confirmationCode)
+        {
+            this.UserName = userName;
+            this.ConfirmationCode = confirmationCode;
+        }
 
-        [Required] 
-        public string ConfirmationCode { get; set; }
+        [Required]
+        public string UserName { get; }
+
+        [Required]
+        public string ConfirmationCode { get; }
     }
 }

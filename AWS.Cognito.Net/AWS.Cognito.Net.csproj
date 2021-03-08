@@ -2,14 +2,23 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="AWSSDK.Core" Version="3.5.2.1" />
         <PackageReference Include="Amazon.AspNetCore.Identity.Cognito" Version="2.0.0" />
         <PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="2.0.1" />
+        <PackageReference Include="Meziantou.Analyzer" Version="1.0.647">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.1" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.321">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     </ItemGroup>
 
