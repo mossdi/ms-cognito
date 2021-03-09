@@ -84,9 +84,9 @@ namespace AWS.Cognito.Net.Providers
                 cognitoUser.SessionTokens.RefreshToken);
         }
 
-        public Task<User> SignInGuest()
+        public async Task<User> SignInGuest()
         {
-            return this.SignIn(
+            return await this.SignIn(
                 this.configuration["AWS:UserPool:GuestAccount:UserName"],
                 this.configuration["AWS:UserPool:GuestAccount:Password"]);
         }
