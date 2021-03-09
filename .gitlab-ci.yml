@@ -9,7 +9,7 @@ deploy app:
   only:
     - dev
   variables:
-    TAG: repo.cappers.ca:5050/futurewise-v2/sandbox-cognito:latest
+    TAG: repo.cappers.ca:5050/futurewise-ede/ms-cognito:latest
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD repo.cappers.ca:5050
     - docker build -t $TAG .
