@@ -43,9 +43,9 @@ namespace AWS.Cognito.Net.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<User> SignInGuest(LoginGuestForm form)
+        public async Task<User> SignInGuest()
         {
-            return await this.userService.SignInGuest(form);
+            return await this.userService.SignInGuest();
         }
 
         [HttpPost]

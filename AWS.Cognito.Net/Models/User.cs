@@ -13,10 +13,16 @@ namespace AWS.Cognito.Net.Models
             this.RefreshToken = refreshToken;
         }
 
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string AccessToken { get; }
 
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string IdentityToken { get; }
 
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string RefreshToken { get; }
     }
 }

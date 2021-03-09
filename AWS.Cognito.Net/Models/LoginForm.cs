@@ -8,16 +8,12 @@ namespace AWS.Cognito.Net.Models
 
     public class LoginForm
     {
-        public LoginForm(string userName, string password)
-        {
-            this.UserName = userName;
-            this.Password = password;
-        }
-
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
         [Required]
-        public string UserName { get; }
+        public string UserName { get; set; } = null!;
 
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
         [Required]
-        public string Password { get; }
+        public string Password { get; set; } = null!;
     }
 }

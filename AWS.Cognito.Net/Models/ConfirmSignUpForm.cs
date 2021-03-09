@@ -8,16 +8,12 @@ namespace AWS.Cognito.Net.Models
 
     public class ConfirmSignUpForm
     {
-        public ConfirmSignUpForm(string userName, string confirmationCode)
-        {
-            this.UserName = userName;
-            this.ConfirmationCode = confirmationCode;
-        }
-
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
         [Required]
-        public string UserName { get; }
+        public string UserName { get; set; } = null!;
 
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
         [Required]
-        public string ConfirmationCode { get; }
+        public string ConfirmationCode { get; set; } = null!;
     }
 }

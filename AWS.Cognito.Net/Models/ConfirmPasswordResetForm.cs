@@ -8,20 +8,16 @@ namespace AWS.Cognito.Net.Models
 
     public class ConfirmPasswordResetForm
     {
-        public ConfirmPasswordResetForm(string userName, string confirmationCode, string newPassword)
-        {
-            this.UserName = userName;
-            this.ConfirmationCode = confirmationCode;
-            this.NewPassword = newPassword;
-        }
-
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         [Required]
-        public string UserName { get; }
+        public string UserName { get; set; } = null!;
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         [Required]
-        public string ConfirmationCode { get; }
+        public string ConfirmationCode { get; set; } = null!;
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         [Required]
-        public string NewPassword { get; }
+        public string NewPassword { get; set; } = null!;
     }
 }

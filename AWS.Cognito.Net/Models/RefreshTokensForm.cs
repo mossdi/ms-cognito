@@ -8,12 +8,8 @@ namespace AWS.Cognito.Net.Models
 
     public class RefreshTokensForm
     {
-        public RefreshTokensForm(string refreshToken)
-        {
-            this.RefreshToken = refreshToken;
-        }
-
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         [Required]
-        public string RefreshToken { get; }
+        public string RefreshToken { get; set; } = null!;
     }
 }

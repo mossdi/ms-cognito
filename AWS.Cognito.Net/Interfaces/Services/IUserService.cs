@@ -15,7 +15,7 @@ namespace AWS.Cognito.Net.Interfaces.Services
 
         Task<TUser> SignIn(LoginForm form);
 
-        Task<TUser> SignInGuest(LoginGuestForm form);
+        Task<TUser> SignInGuest();
 
         Task<TUser> RefreshTokens(RefreshTokensForm form);
 

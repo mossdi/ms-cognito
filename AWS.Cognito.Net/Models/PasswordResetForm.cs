@@ -8,12 +8,8 @@ namespace AWS.Cognito.Net.Models
 
     public class PasswordResetForm
     {
-        public PasswordResetForm(string userName)
-        {
-            this.UserName = userName;
-        }
-
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         [Required]
-        public string UserName { get; }
+        public string UserName { get; set; } = null!;
     }
 }
