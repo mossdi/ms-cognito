@@ -6,6 +6,7 @@ namespace AWS.Cognito.Net.Providers
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Amazon;
     using Amazon.CognitoIdentity;
@@ -30,7 +31,7 @@ namespace AWS.Cognito.Net.Providers
             string identityPoolId = configuration["AWS:IdentityPool:PoolID"];
             RegionEndpoint regionEndpoint = RegionEndpoint.GetBySystemName(configuration["AWS:Region"]);
 
-            CognitoAWSCredentials cognitoAwsCredentials = new(identityPoolId, regionEndpoint);
+            CognitoAWSCredentials cognitoAwsCredentials = new (identityPoolId, regionEndpoint);
 
             this.cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(
                 cognitoAwsCredentials,
@@ -43,17 +44,20 @@ namespace AWS.Cognito.Net.Providers
                 clientSecret);
         }
 
-        public async Task SignUp(
+        public async Task<string> SignUp(
             string userName,
             string password,
             IDictionary<string, string> attributes,
             IDictionary<string, string>? validationData)
         {
-            await this.cognitoUserPool.SignUpAsync(
-                userName,
-                password,
-                attributes,
-                validationData);
+            var response = await this.cognitoIdentityProvider.SignUpAsync(
+                this.CreateSignUpRequest(
+                    userName,
+                    password,
+                    attributes,
+                    validationData));
+
+            return response.UserSub;
         }
 
         public async Task ConfirmSignUp(
@@ -89,7 +93,8 @@ namespace AWS.Cognito.Net.Providers
             {
                 ClientId = this.clientId,
                 AuthFlow = AuthFlowType.REFRESH_TOKEN_AUTH,
-                AuthParameters = new Dictionary<string, string>(StringComparer.Ordinal) { { "REFRESH_TOKEN", refreshToken } },
+                AuthParameters = new Dictionary<string, string>(StringComparer.Ordinal)
+                    { { "REFRESH_TOKEN", refreshToken } },
             });
 
             return new User(
@@ -116,6 +121,32 @@ namespace AWS.Cognito.Net.Providers
         {
             await this.cognitoUserPool.GetUser(userName)
                 .ConfirmForgotPasswordAsync(confirmationCode, newPassword);
+        }
+
+        private static List<AttributeType> CreateAttributeList(
+            IDictionary<string, string> attributeDict)
+        {
+            return attributeDict.Select(pair => new AttributeType { Name = pair.Key, Value = pair.Value }).ToList();
+        }
+
+        private SignUpRequest CreateSignUpRequest(
+            string userId,
+            string password,
+            IDictionary<string, string>? userAttributes,
+            IDictionary<string, string>? validationData)
+        {
+            var attributeTypeList1 = userAttributes != null
+                ? CreateAttributeList(userAttributes)
+                : throw new ArgumentNullException(nameof(userAttributes), "userAttributes cannot be null.");
+            var attributeTypeList2 = validationData != null ? CreateAttributeList(validationData) : null;
+            return new SignUpRequest
+            {
+                Username = userId,
+                Password = password,
+                ClientId = this.clientId,
+                UserAttributes = attributeTypeList1,
+                ValidationData = attributeTypeList2,
+            };
         }
     }
 }

@@ -8,19 +8,17 @@ namespace AWS.Cognito.Net.Models
 
     public class SignUpForm
     {
-        public SignUpForm(string userName, string password, string email)
-        {
-            this.UserName = userName;
-            this.Password = password;
-            this.Email = email;
-        }
+        [Required]
+
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public string UserName { get; set; } = null!;
 
         [Required]
-        public string UserName { get; }
 
-        [Required]
-        public string Password { get; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public string Password { get; set; } = null!;
 
-        public string Email { get; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public string? Email { get; set; }
     }
 }

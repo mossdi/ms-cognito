@@ -9,7 +9,7 @@ namespace AWS.Cognito.Net.Interfaces.Providers
 
     public interface IUserPoolProvider<TUser>
     {
-        Task SignUp(
+        Task<string> SignUp(
             string userId,
             string password,
             IDictionary<string, string> attributes,

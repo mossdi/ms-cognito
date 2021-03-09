@@ -19,11 +19,18 @@ namespace AWS.Cognito.Net.Services
             this.userPoolProvider = userPoolProvider;
         }
 
-        public async Task SignUp(SignUpForm form)
+        public async Task<string> SignUp(SignUpForm form)
         {
-            var attributes = new Dictionary<string, string>(System.StringComparer.Ordinal) { { "email", form.Email } };
+            var attributes = new Dictionary<string, string>(System.StringComparer.Ordinal);
 
-            await this.userPoolProvider.SignUp(
+            if (form.Email is not null)
+            {
+                attributes["email"] = form.Email;
+            }
+
+            form.Email ??= form.UserName;
+
+            return await this.userPoolProvider.SignUp(
                 form.UserName,
                 form.Password,
                 attributes,

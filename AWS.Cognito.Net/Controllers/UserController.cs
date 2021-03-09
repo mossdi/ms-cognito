@@ -22,9 +22,9 @@ namespace AWS.Cognito.Net.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task SignUp(SignUpForm form)
+        public async Task<string> SignUp(SignUpForm form)
         {
-            await this.userService.SignUp(form);
+            return await this.userService.SignUp(form);
         }
 
         [HttpPost]
