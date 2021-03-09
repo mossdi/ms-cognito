@@ -22,6 +22,7 @@ namespace AWS.Cognito.Net.Providers
         private readonly string clientId;
         private readonly CognitoUserPool cognitoUserPool;
         private readonly AmazonCognitoIdentityProviderClient cognitoIdentityProvider;
+        private readonly IConfiguration configuration;
 
         public AwsCognitoUserPoolProvider(IConfiguration configuration)
         {
@@ -42,6 +43,8 @@ namespace AWS.Cognito.Net.Providers
                 this.clientId,
                 this.cognitoIdentityProvider,
                 clientSecret);
+
+            this.configuration = configuration;
         }
 
         public async Task<string> SignUp(
@@ -83,7 +86,9 @@ namespace AWS.Cognito.Net.Providers
 
         public Task<User> SignInGuest()
         {
-            throw new NotImplementedException();
+            return this.SignIn(
+                this.configuration["AWS:UserPool:GuestAccount:UserName"],
+                this.configuration["AWS:UserPool:GuestAccount:Password"]);
         }
 
         public async Task<User> RefreshTokens(
