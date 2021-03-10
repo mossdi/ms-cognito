@@ -1,39 +1,46 @@
-using AWS.Cognito.Net.Models;
-using AWS.Cognito.Net.Services;
-using AWS.Cognito.Net.Providers;
-using AWS.Cognito.Net.Interfaces.Services;
-using AWS.Cognito.Net.Interfaces.Providers;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.OpenApi.Models;
+// <copyright file="Startup.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace AWS.Cognito.Net
 {
+    using AWS.Cognito.Net.Interfaces.Providers;
+    using AWS.Cognito.Net.Interfaces.Services;
+    using AWS.Cognito.Net.Models;
+    using AWS.Cognito.Net.Providers;
+    using AWS.Cognito.Net.Services;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.OpenApi.Models;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
         }
 
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public IConfiguration Configuration { get; }
-        
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "AWS.Cognito.Net", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "AWS.Cognito.Net", Version = "v1" });
             });
-            
+
             // Dependency Injection
-            services.AddScoped<IUserPoolProvider<User>, AwsCognitoUserPoolProvider<User>>();
-            services.AddScoped<IUserService<User>, UserService<User>>();
+            services.AddScoped<IUserPoolProvider<User>, AwsCognitoUserPoolProvider>();
+            services.AddScoped<IUserService<User>, UserService>();
         }
-        
+
+        // ReSharper disable once CA1822
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -48,7 +55,7 @@ namespace AWS.Cognito.Net
             app.UseRouting();
 
             app.UseAuthorization();
-            
+
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

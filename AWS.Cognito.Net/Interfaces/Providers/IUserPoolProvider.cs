@@ -1,20 +1,24 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+// <copyright file="IUserPoolProvider.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace AWS.Cognito.Net.Interfaces.Providers
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+
     public interface IUserPoolProvider<TUser>
-    { 
-        Task SignUp(
+    {
+        Task<string> SignUp(
             string userId,
             string password,
-            Dictionary<string, string> attributes,
-            Dictionary<string, string> validationData);
+            IDictionary<string, string> attributes,
+            IDictionary<string, string>? validationData);
 
         Task ConfirmSignUp(
             string userId,
             string confirmationCode);
-        
+
         Task<TUser> SignIn(
             string userId,
             string password);
@@ -23,9 +27,9 @@ namespace AWS.Cognito.Net.Interfaces.Providers
 
         Task<TUser> RefreshTokens(
             string refreshToken);
-        
+
         Task SignOut(string userId);
-        
+
         Task PasswordReset(string userName);
 
         Task ConfirmPasswordReset(
