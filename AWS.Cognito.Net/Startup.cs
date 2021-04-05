@@ -38,6 +38,7 @@ namespace AWS.Cognito.Net
             // Dependency Injection
             services.AddScoped<IUserPoolProvider<User>, AwsCognitoUserPoolProvider>();
             services.AddScoped<IUserService<User>, UserService>();
+            services.AddHealthChecks();
         }
 
         // ReSharper disable once CA1822
@@ -54,7 +55,11 @@ namespace AWS.Cognito.Net
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("health");
+            });
         }
     }
 }
