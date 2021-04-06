@@ -1,6 +1,14 @@
 stages:
   - build-docker-container
   - deploy
+  - deploy-aws
+  
+variables: 
+  AWS_MS_CONGNITO_REGISTRY: 639071073513.dkr.ecr.us-east-1.amazonaws.com
+  AWS_MS_CONGNITO_TAG: 639071073513.dkr.ecr.us-east-1.amazonaws.com/ms-cognito:latest
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+    
 
 deploy app:
   stage: build-docker-container
@@ -15,6 +23,26 @@ deploy app:
     - docker build -t $TAG .
     - docker push $TAG
 
+
+deploy aws:
+  stage: deploy-aws
+  image: 
+    name: amazon/aws-cli
+    entrypoint: [""]
+  services:
+    - docker:dind    
+  before_script:
+    - amazon-linux-extras install docker
+    - aws --version
+    - docker --version
+  tags:
+    - docker-runner-only-please
+  only:
+    - aws-staging
+  script:
+    - docker build -t $AWS_MS_CONGNITO_TAG . 
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_MS_SES_REGISTRY
+    - docker push $AWS_MS_CONGNITO_TAG
 
 
 #deploy:
