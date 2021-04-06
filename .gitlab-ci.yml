@@ -41,7 +41,7 @@ deploy aws:
     - aws-staging
   script:
     - docker build -t $AWS_MS_CONGNITO_TAG . 
-    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_MS_SES_REGISTRY
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_MS_CONGNITO_REGISTRY
     - docker push $AWS_MS_CONGNITO_TAG
 
 
