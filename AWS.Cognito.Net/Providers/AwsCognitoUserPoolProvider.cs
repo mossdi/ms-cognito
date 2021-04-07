@@ -67,8 +67,15 @@ namespace AWS.Cognito.Net.Providers
             string userName,
             string confirmationCode)
         {
-            await this.cognitoUserPool.GetUser(userName)
-                .ConfirmSignUpAsync(confirmationCode, false);
+            try
+            {
+                await this.cognitoUserPool.GetUser(userName)
+                    .ConfirmSignUpAsync(confirmationCode, false);
+            }
+            catch (InvalidLambdaResponseException e)
+            {
+                // Do nothing
+            }
         }
 
         public async Task<User> SignIn(
