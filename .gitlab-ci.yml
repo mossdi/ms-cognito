@@ -51,7 +51,7 @@ deploy_aws_ecs:
     name: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   stage: deploy_aws_ecs
   only:
-    - staging
+    - aws-staging
   script:
     - aws ecs update-service --cluster FW-EDE-CLUSTER --service ms-db --force-new-deployment
 
