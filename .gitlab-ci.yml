@@ -2,6 +2,7 @@ stages:
   - build-docker-container
   - deploy
   - deploy-aws
+  - deploy_aws_ecs
   
 variables: 
   AWS_MS_CONGNITO_REGISTRY: 639071073513.dkr.ecr.us-east-1.amazonaws.com
@@ -43,6 +44,16 @@ deploy aws:
     - docker build -t $AWS_MS_CONGNITO_TAG . 
     - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_MS_CONGNITO_REGISTRY
     - docker push $AWS_MS_CONGNITO_TAG
+
+# push the new image to Fargate
+deploy_aws_ecs:
+  image:
+    name: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  stage: deploy_aws_ecs
+  only:
+    - staging
+  script:
+    - aws ecs update-service --cluster FW-EDE-CLUSTER --service ms-db --force-new-deployment
 
 
 #deploy:
